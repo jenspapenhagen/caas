@@ -8,7 +8,6 @@ package eu.itech.caas.boundary;
 import eu.itech.caas.dao.ProductDao;
 import eu.itech.caas.entity.Product;
 import java.text.NumberFormat;
-import java.util.Currency;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -56,7 +55,7 @@ public class CatalogResource {
         builder.add("ProductId", product.getId())
                 .add("ProductName", product.getProductName())
                 .add("Tax", product.getTaxRate())
-                .add("Price", currenyFormatEU.format(product.getPrice()));
+                .add("Price without tax", currenyFormatEU.format(product.getPrice()));
 
         return builder.build();
     }
