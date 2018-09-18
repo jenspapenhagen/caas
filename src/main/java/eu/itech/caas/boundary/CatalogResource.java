@@ -48,7 +48,7 @@ public class CatalogResource {
      * @return a JSON form the Product with the require post tax added the price
      */
     @GET
-    @Path("/product/{product}/mwst/")
+    @Path("/product/{product}/posttax/")
     @Produces(MediaType.TEXT_PLAIN)
     public JsonObject getPostTaxPrice(@PathParam("product") int param) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
