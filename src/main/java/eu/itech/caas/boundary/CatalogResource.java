@@ -5,6 +5,9 @@
  */
 package eu.itech.caas.boundary;
 
+import eu.itech.caas.dao.ProductDao;
+import eu.itech.caas.entity.Product;
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -15,28 +18,42 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
- * Catalog as a Service
- * Mircoservice for an ITECH Project
+ * Catalog as a Service Mircoservice for an ITECH Project
+ *
  * @author Jens Papenhagen
  */
 @Path("caas")
 @Produces(MediaType.APPLICATION_JSON)
 public class CatalogResource {
 
+    @Inject
+    private ProductDao dao;
+
     /**
      * This Methode giveback the Post Tax Price (Nettopreis) of a given
      * ProductId value-added tax = "Mehrwert Steuer"
      *
      * @param param as the given ProductId
-     * @return a JSON form the Product with the price
+     * @return a Valid JSON (RFC 4627) form the Product with the price
      */
     @GET
     @Path("/product/{product}")
     @Produces(MediaType.TEXT_PLAIN)
-    public JsonObject getPreTaxPrice(@PathParam("product") int param) {
+    public JsonObject getPreTaxPrice(@PathParam("product") long param) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
 
-        //TODO connect to DB and giveback the product with the given id
+        Product product = dao.findById(param);
+        //if not found give back a empty json
+        if (product == null) {
+            builder.add("Product", "none");
+            return builder.build();
+        }
+
+        builder.add("ProductId", product.getId())
+                .add("ProductName", product.getProductName())
+                .add("Tax", product.getTaxRate())
+                .add("Price", product.getPrice());
+
         return builder.build();
     }
 
@@ -45,18 +62,29 @@ public class CatalogResource {
      * ProductId value-added tax = "Mehrwert Steuer"
      *
      * @param param as the given ProductId
-     * @return a JSON form the Product with the require post tax added the price
+     * @return a Valid JSON (RFC 4627) form the Product with the require post
+     * tax added the price
      */
     @GET
     @Path("/product/{product}/posttax/")
     @Produces(MediaType.TEXT_PLAIN)
-    public JsonObject getPostTaxPrice(@PathParam("product") int param) {
+    public JsonObject getPostTaxPrice(@PathParam("product") long param) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
+        Product product = dao.findById(param);
+        //if not found give back a empty json
+        if (product == null) {
+            builder.add("Product", "none");
+            return builder.build();
+        }
 
-        /**
-         * TODO connect to DB and giveback the product with the given id and
-         * adding 19% or 7% to it form the db, too
-         */
+        double tax = (1.0 + product.getTaxRate());
+
+        builder.add("ProductId", product.getId())
+                .add("ProductName", product.getProductName())
+                .add("Tax", product.getTaxRate())
+                .add("Price", (product.getPrice() * tax))
+                .add("Price without tax", product.getPrice());
+
         return builder.build();
     }
 
