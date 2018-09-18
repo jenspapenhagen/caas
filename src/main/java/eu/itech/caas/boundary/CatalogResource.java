@@ -7,6 +7,8 @@ package eu.itech.caas.boundary;
 
 import eu.itech.caas.dao.ProductDao;
 import eu.itech.caas.entity.Product;
+import java.text.NumberFormat;
+import java.util.Currency;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -28,6 +30,8 @@ public class CatalogResource {
 
     @Inject
     private ProductDao dao;
+
+    private NumberFormat currenyFormatEU = NumberFormat.getCurrencyInstance(java.util.Locale.GERMANY);
 
     /**
      * This Methode giveback the Post Tax Price (Nettopreis) of a given
@@ -52,7 +56,7 @@ public class CatalogResource {
         builder.add("ProductId", product.getId())
                 .add("ProductName", product.getProductName())
                 .add("Tax", product.getTaxRate())
-                .add("Price", product.getPrice());
+                .add("Price", currenyFormatEU.format(product.getPrice()));
 
         return builder.build();
     }
@@ -82,8 +86,8 @@ public class CatalogResource {
         builder.add("ProductId", product.getId())
                 .add("ProductName", product.getProductName())
                 .add("Tax", product.getTaxRate())
-                .add("Price", (product.getPrice() * tax)/100)
-                .add("Price without tax", product.getPrice());
+                .add("Price", currenyFormatEU.format((product.getPrice() * tax) / 100))
+                .add("Price without tax", currenyFormatEU.format(product.getPrice()));
 
         return builder.build();
     }
