@@ -1,4 +1,4 @@
-package com.airhacks.ping.control;
+package eu.itech.caas.control;
 
 import java.util.Map;
 import java.util.stream.Collector;

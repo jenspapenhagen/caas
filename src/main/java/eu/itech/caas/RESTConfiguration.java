@@ -1,6 +1,6 @@
 /*
  */
-package com.airhacks.ping;
+package eu.itech.caas;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

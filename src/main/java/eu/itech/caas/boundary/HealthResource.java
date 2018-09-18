@@ -1,6 +1,6 @@
-package com.airhacks.ping.boundary;
+package eu.itech.caas.boundary;
 
-import com.airhacks.ping.control.ServerWatch;
+import eu.itech.caas.control.ServerWatch;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;

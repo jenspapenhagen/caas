@@ -1,4 +1,4 @@
-package com.airhacks.ping.control;
+package eu.itech.caas.control;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
