@@ -77,12 +77,12 @@ public class CatalogResource {
             return builder.build();
         }
 
-        double tax = (1.0 + product.getTaxRate());
+        double tax = (100 + product.getTaxRate());
 
         builder.add("ProductId", product.getId())
                 .add("ProductName", product.getProductName())
                 .add("Tax", product.getTaxRate())
-                .add("Price", (product.getPrice() * tax))
+                .add("Price", (product.getPrice() * tax)/100)
                 .add("Price without tax", product.getPrice());
 
         return builder.build();
