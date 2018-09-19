@@ -15,7 +15,6 @@
  */
 package eu.itech.caas.dao;
 
-import eu.itech.caas.assist.AbstractDao;
 import eu.itech.caas.assist.Caas;
 import eu.itech.caas.entity.Product;
 import javax.ejb.Stateless;
