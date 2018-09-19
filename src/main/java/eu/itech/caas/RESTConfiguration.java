@@ -1,5 +1,3 @@
-/*
- */
 package eu.itech.caas;
 
 import javax.ws.rs.ApplicationPath;

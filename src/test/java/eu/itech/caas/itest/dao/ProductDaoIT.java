@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 jay.
+ * Copyright 2018 jens papenhagen.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,9 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.After;
 
 /**
+ * An integrationstest for the Product Dao (Data Access Object)
  *
- * @author jay
+ * @author jens papenhagen
  */
 @RunWith(Arquillian.class)
 public class ProductDaoIT extends ArquillianProjectArchive {

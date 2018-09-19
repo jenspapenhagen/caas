@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2018 Jens Papenhagen.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package eu.itech.caas.itest.dao;
 
@@ -10,7 +20,7 @@ import eu.itech.caas.dao.AbstractDao;
 import eu.itech.caas.entity.Product;
 import eu.itech.caas.itest.ArquillianProjectArchive;
 
-import eu.itech.caas.itest.Gernator;
+import eu.itech.caas.itest.Generator;
 import eu.itech.caas.itest.Utils;
 
 import java.util.List;
@@ -28,6 +38,7 @@ import org.junit.runner.RunWith;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
+ * an intetraiontest for the Abstract Dao in this testcase for Product.
  *
  * @author jens.papenhagen
  */
@@ -43,9 +54,9 @@ public class AbstractDaoIT extends ArquillianProjectArchive {
 
     @Inject
     private AbstractDao<Product> dao;
-    
+
     @Inject
-    private Gernator gen;
+    private Generator gen;
 
     @After
     public void teardown() throws Exception {
@@ -58,7 +69,7 @@ public class AbstractDaoIT extends ArquillianProjectArchive {
     @Test
     public void testFindAll() throws Exception {
         int amount = 1;
-        gen.genarateProduct(amount);
+        gen.generateProduct(amount);
 
         List<Product> products = dao.findAll();
 
@@ -70,7 +81,7 @@ public class AbstractDaoIT extends ArquillianProjectArchive {
     @Test
     public void testFindAllWithStartAndAmount() throws Exception {
         int amount = 5;
-        gen.genarateProduct(amount);
+        gen.generateProduct(amount);
 
         int start = 2;
         int returnAmout = amount - start;
@@ -84,7 +95,7 @@ public class AbstractDaoIT extends ArquillianProjectArchive {
     @Test
     public void testFindById() throws Exception {
         int amount = 1;
-        gen.genarateProduct(amount);
+        gen.generateProduct(amount);
 
         Product product = dao.findById(1l);
         assertThat(product).as("Product is not null").isNotNull();
@@ -95,14 +106,12 @@ public class AbstractDaoIT extends ArquillianProjectArchive {
     @Test
     public void testCount() throws Exception {
         int amount = 3;
-        gen.genarateProduct(amount);
+        gen.generateProduct(amount);
 
         int count = dao.count();
         assertThat(count).as("Products count is not null").isNotNull();
         assertThat(count).as("Product has the same id").isEqualTo(amount);
 
     }
-
-
 
 }

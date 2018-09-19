@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 jay.
+ * Copyright 2018 Jens Papenhagen.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
+ * buildup the Persistence unit for this project
  *
  * @author Jens Papenhagen
  */

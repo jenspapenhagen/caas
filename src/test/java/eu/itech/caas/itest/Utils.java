@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 jay.
+ * Copyright 2018 jens papenhagen.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Utils for handling the in-memory db H2 more infos:
+ * https://en.wikipedia.org/wiki/H2_(DBMS)
  *
- * @author jay
+ * @author jens papenhagen
  */
 public class Utils {
 

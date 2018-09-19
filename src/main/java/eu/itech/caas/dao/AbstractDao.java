@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 jay.
+ * Copyright 2018 Jens Papenhagen.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 
 /**
+ * the Abstract Dao (Data Access Object) more infos:
+ * https://en.wikipedia.org/wiki/Data_access_object
  *
- * @author jens
+ * @author Jens Papenhagen
  */
 public abstract class AbstractDao<T> {
 

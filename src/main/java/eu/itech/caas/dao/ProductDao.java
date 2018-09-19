@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 jay.
+ * Copyright 2018 Jens Papenhagen.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import javax.persistence.EntityManager;
 /**
  * Class that provides find and aggregation methods for {@link Product}.
  *
- * @author jens
+ * @author Jens Papenhagen
  */
 @Stateless
 public class ProductDao extends AbstractDao<Product> {

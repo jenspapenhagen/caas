@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 jay.
+ * Copyright 2018 Jens Papenhagen.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
+ * An qualifiers to provide various implementations of a particular bean type. A
+ * qualifier is an annotation that you apply to a bean.
  *
  * @author Jens Papenhagen
  */

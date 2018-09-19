@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 jay.
+ * Copyright 2018 jens papenhagen.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,14 @@ import static org.jboss.shrinkwrap.api.Filters.exclude;
 import static org.jboss.shrinkwrap.resolver.api.maven.ScopeType.RUNTIME;
 
 /**
+ * building up the webarchive for the Arquillian Int. test of this mircoservice
  *
- * @author jay
+ * "Arquillian is an innovative and highly extensible testing platform for the
+ * JVM that enables developers to easily create automated integration,
+ * functional and acceptance tests for Java middleware." -
+ * http://arquillian.org/invasion/
+ *
+ * @author jens papenhagen
  */
 public class ArquillianProjectArchive {
 
@@ -54,7 +60,7 @@ public class ArquillianProjectArchive {
                 .addClass(Coordinate.class) // Need this cause of the maven resolver is part of the deployment
                 .addClass(ArquillianProjectArchive.class)
                 .addClass(Utils.class)
-                .addClass(Gernator.class)
+                .addClass(Generator.class)
                 .addAsResource(new ClassLoaderAsset("META-INF/test-persistence.xml"), "META-INF/persistence.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsLibraries(libs);
