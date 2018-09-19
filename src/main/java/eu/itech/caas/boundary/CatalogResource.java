@@ -48,7 +48,7 @@ public class CatalogResource {
         Product product = dao.findById(param);
         //if not found give back a empty json
         if (product == null) {
-            builder.add("Product", "none");
+            builder.add("ProductId", "none");
             return builder.build();
         }
 
@@ -76,7 +76,7 @@ public class CatalogResource {
         Product product = dao.findById(param);
         //if not found give back a empty json
         if (product == null) {
-            builder.add("Product", "none");
+            builder.add("ProductId", "none");
             return builder.build();
         }
 
