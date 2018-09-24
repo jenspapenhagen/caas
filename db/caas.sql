@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 --
 -- Datenbank: `caas`
 --
-CREATE DATABASE IF NOT EXISTS `caas` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+CREATE DATABASE `caas` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 USE `caas`;
 
 -- --------------------------------------------------------
@@ -28,8 +28,7 @@ USE `caas`;
 -- Tabellenstruktur für Tabelle `catalog`
 --
 
-DROP TABLE IF EXISTS `catalog`;
-CREATE TABLE IF NOT EXISTS `catalog` (
+CREATE TABLE `catalog` (
   `id` bigint(20) NOT NULL,
   `catalogName` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -48,8 +47,7 @@ INSERT INTO `catalog` (`id`, `catalogName`) VALUES(2, 'Lebensmittel');
 -- Tabellenstruktur für Tabelle `catalog_product`
 --
 
-DROP TABLE IF EXISTS `catalog_product`;
-CREATE TABLE IF NOT EXISTS `catalog_product` (
+CREATE TABLE `catalog_product` (
   `Catalog_id` bigint(20) NOT NULL,
   `productList_id` bigint(20) NOT NULL,
   UNIQUE KEY `UK_py4pcnvo3te8e1xnmgwoav90d` (`productList_id`),
@@ -73,8 +71,7 @@ INSERT INTO `catalog_product` (`Catalog_id`, `productList_id`) VALUES(2, 6);
 -- Tabellenstruktur für Tabelle `hibernate_sequence`
 --
 
-DROP TABLE IF EXISTS `hibernate_sequence`;
-CREATE TABLE IF NOT EXISTS `hibernate_sequence` (
+CREATE TABLE `hibernate_sequence` (
   `next_val` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -91,8 +88,7 @@ INSERT INTO `hibernate_sequence` (`next_val`) VALUES(1);
 -- Tabellenstruktur für Tabelle `product`
 --
 
-DROP TABLE IF EXISTS `product`;
-CREATE TABLE IF NOT EXISTS `product` (
+CREATE TABLE `product` (
   `id` bigint(20) NOT NULL,
   `price` double NOT NULL,
   `productName` varchar(255) DEFAULT NULL,
