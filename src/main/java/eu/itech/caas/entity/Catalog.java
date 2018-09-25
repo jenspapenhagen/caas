@@ -62,4 +62,11 @@ public class Catalog implements Serializable {
         this.catalogName = catalogName;
     }
 
+    @Override
+    public String toString() {
+        return "Catalog{" + "id=" + id + ", catalogName=" + catalogName + ", productList=" + productList + '}';
+    }
+    
+    
+
 }
