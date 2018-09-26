@@ -39,8 +39,11 @@ public class HealthResource {
     @GET
     @Path("/start-time")
     @Produces(MediaType.TEXT_PLAIN)
-    public String bootTime() {
-        return this.watch.getDateTime().toString();
+    public JsonObject bootTime() {
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        builder.add("boottime", watch.getDateTime().toString());
+
+        return builder.build();
     }
 
     @GET
@@ -50,6 +53,7 @@ public class HealthResource {
         builder.add("Available memory in mb", this.watch.availableMemoryInMB()).
                 add("Used memory in mb", this.watch.usedMemoryInMb()).
                 add("Memory at start time", this.watch.usedMemoryInMbAtStartTime());
+        
         return builder.build();
     }
 

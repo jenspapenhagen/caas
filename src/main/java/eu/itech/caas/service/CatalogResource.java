@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eu.itech.caas.boundary;
+package eu.itech.caas.service;
 
 import eu.itech.caas.dao.ProductDao;
 import eu.itech.caas.entity.Product;
 import java.text.NumberFormat;
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -56,18 +57,19 @@ public class CatalogResource {
     @Produces(MediaType.TEXT_PLAIN)
     public JsonObject getPreTaxPrice(@PathParam("product") long param) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
+         Optional<Product> product = getProduct(param);
 
-        Product product = dao.findById(param);
-        //if not found give back a empty json
-        if (product == null) {
+        //not found give back a empty json
+        if (!product.isPresent()) {
             builder.add("ProductId", "none");
             return builder.build();
         }
 
-        builder.add("ProductId", product.getId())
-                .add("ProductName", product.getProductName())
-                .add("Tax", product.getTaxRate())
-                .add("Price without tax", currenyFormatEU.format(product.getPrice()));
+        Product p = product.get();
+        builder.add("ProductId", p.getId())
+                .add("ProductName", p.getProductName())
+                .add("Tax", p.getTaxRate())
+                .add("Price without tax", currenyFormatEU.format(p.getPrice()));
 
         return builder.build();
     }
@@ -85,22 +87,42 @@ public class CatalogResource {
     @Produces(MediaType.TEXT_PLAIN)
     public JsonObject getPostTaxPrice(@PathParam("product") long param) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        Product product = dao.findById(param);
-        //if not found give back a empty json
-        if (product == null) {
+        Optional<Product> product = getProduct(param);
+
+        //not found give back a empty json
+        if (!product.isPresent()) {
             builder.add("ProductId", "none");
             return builder.build();
         }
 
-        double tax = (100 + product.getTaxRate());
+        Product p = product.get();
+        
+        double tax = (100 + p.getTaxRate());
 
-        builder.add("ProductId", product.getId())
-                .add("ProductName", product.getProductName())
-                .add("Tax", product.getTaxRate())
-                .add("Price", currenyFormatEU.format((product.getPrice() * tax) / 100))
-                .add("Price without tax", currenyFormatEU.format(product.getPrice()));
+        builder.add("ProductId", p.getId())
+                .add("ProductName", p.getProductName())
+                .add("Tax", p.getTaxRate())
+                .add("Price", currenyFormatEU.format((p.getPrice() * tax) / 100))
+                .add("Price without tax", currenyFormatEU.format(p.getPrice()));
 
         return builder.build();
+    }
+
+    /**
+     * This Methode use an Optional of Nullable
+     * for cleaner connection handling with the DB 
+     * 
+     * some infos of Handling Optionals
+     * https://www.baeldung.com/java-optional
+     *
+     * @param param as the given ProductId
+     * @return an Optional of Product
+     */
+    private Optional<Product> getProduct(long param) {
+        Product product = dao.findById(param);
+        Optional<Product> opt = Optional.ofNullable(product);
+
+        return opt;
     }
 
 }

@@ -16,7 +16,7 @@
 package eu.itech.caas.itest.bounddary;
 
 import eu.itech.caas.assist.Caas;
-import eu.itech.caas.boundary.CatalogResource;
+import eu.itech.caas.service.CatalogResource;
 import eu.itech.caas.itest.ArquillianProjectArchive;
 import eu.itech.caas.itest.Generator;
 import eu.itech.caas.itest.Utils;
