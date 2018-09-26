@@ -6,6 +6,10 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
+#copy all files from the test dev deployment into /opt/
+cp -rf /devdeploy/* /opt/wildfly/
+
+
 #create user 
 adduser serveradmin
 
@@ -43,10 +47,10 @@ docker push localhost:5000/base/java
 docker push localhost:5000/base/wildfly
 docker push localhost:5000/base/app
 
-#remove the old local images
+#remove/untag the old local images
 docker image remove base/java
 docker image remove base/wildfly
 docker image remove base/app
 
 #run the app image
-docker run -d -p 8082:8080 -p 9992:9990 -u serveradmin:serveradmin --name caas -v /opt/wildfly/standalone/log:/opt/wildfly-14.0.1.Final/standalone/log -v /opt/wildfly/standalone/deployments:/opt/wildfly-14.0.1.Final/standalone/deployments -v /opt/wildfly/standalone/configuration:/opt/wildfly-14.0.1.Final/standalone/configuration localhost:5000/base/app /opt/jboss/wildfly/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0 -bmanagement 0.0.0.0
+docker run -d -p 8082:8080 -p 9992:9990 -u serveradmin:serveradmin --name caas -v /data/container/caas/log:/opt/wildfly-14.0.1.Final/standalone/log -v /data/container/caas/deployments:/opt/wildfly-14.0.1.Final/standalone/deployments -v /data/container/caas/configuration:/opt/wildfly-14.0.1.Final/standalone/configuration localhost:5000/base/app /opt/jboss/wildfly/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0 -bmanagement 0.0.0.0
