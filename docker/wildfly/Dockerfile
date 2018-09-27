@@ -1,6 +1,6 @@
 FROM base/java
 
-LABEL maintainer="Jens Papenhagen <jens.papenhagen@web.de>" description="Java EE8 Full & Web Distribution"
+LABEL maintainer="Jens Papenhagen <jens.papenhagen@web.de>" description="Wildfly 14.0.1Final with datasource to an extern Mariadb/MySQL"
 
 # Wildfly Appserver
 ENV INSTALL_DIR /opt
@@ -35,9 +35,9 @@ RUN curl -O https://download.jboss.org/wildfly/${WILDFLY_VERSION}/wildfly-${WILD
     && chmod -R a+rw ${INSTALL_DIR}
 
 # adding the user to the wildfly
-RUN {WILDFLY_HOME}/bin/add-user.sh -u ${WILDFLY_USER} -p ${WILDFLY_PASS} --silent
+RUN ${WILDFLY_HOME}/bin/add-user.sh -u ${WILDFLY_USER} -p ${WILDFLY_PASS} --silent
 
-# Configure Wildfly server and dry run it to adding the datasrouce
+# Configure Wildfly server and dry run it to adding the datasource
 RUN echo "=> Starting WildFly server" && \
         bash -c '$JBOSS_HOME/bin/standalone.sh &' && \
     echo "=> Waiting for the server to boot" && \
