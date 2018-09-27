@@ -39,7 +39,7 @@ RUN ${WILDFLY_HOME}/bin/add-user.sh -u ${WILDFLY_USER} -p ${WILDFLY_PASS} --sile
 
 # Configure Wildfly server and dry run it to adding the datasource
 RUN echo "=> Starting WildFly server" && \
-        bash -c '$JBOSS_HOME/bin/standalone.sh &' && \
+        bash -c '$WILDFLY_HOME/bin/standalone.sh &' && \
     echo "=> Waiting for the server to boot" && \
         bash -c 'until `$JBOSS_CLI -c ":read-attribute(name=server-state)" 2> /dev/null | grep -q running`; do echo `$JBOSS_CLI -c ":read-attribute(name=server-state)" 2> /dev/null`; sleep 1; done' && \
     echo "=> Downloading MySQL driver/connector form Maven" && \
@@ -63,7 +63,7 @@ RUN echo "=> Starting WildFly server" && \
     echo "=> Shutting down WildFly" && \
         $JBOSS_CLI --connect --command=":shutdown" && \ 
     echo "=> clean up"&& \
-        rm -rf $JBOSS_HOME/standalone/configuration/standalone_xml_history/ $JBOSS_HOME/standalone/log/* && \ 
+        rm -rf $WILDFLY_HOME/standalone/configuration/standalone_xml_history/ $WILDFLY_HOME/standalone/log/* && \ 
         rm -f /tmp/*.jar
 
 USER serveradmin
