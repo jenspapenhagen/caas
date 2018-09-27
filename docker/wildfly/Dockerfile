@@ -25,6 +25,7 @@ ENV MYSQL_CONNECTOR 5.1.47
 
 # setting up the linux user
 RUN useradd -b /opt -m -s /bin/sh -d ${INSTALL_DIR} ${WILDFLY_USER} && echo ${WILDFLY_USER}:${WILDFLY_PASS} | chpasswd
+USER serveradmin
 
 # download wildfly 
 RUN curl -O https://download.jboss.org/wildfly/${WILDFLY_VERSION}/wildfly-${WILDFLY_VERSION}.zip \
@@ -66,6 +67,5 @@ RUN echo "=> Starting WildFly server" && \
         rm -rf $WILDFLY_HOME/standalone/configuration/standalone_xml_history/ $WILDFLY_HOME/standalone/log/* && \ 
         rm -f /tmp/*.jar
 
-USER serveradmin
 ENTRYPOINT ${WILDFLY_HOME}/bin/standalone.sh  -c=standalone-full.xml -b=0.0.0.0 -bmanagement=0.0.0.0
 EXPOSE 8080 9990
