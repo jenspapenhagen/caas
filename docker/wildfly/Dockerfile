@@ -25,7 +25,7 @@ ENV MYSQL_CONNECTOR 5.1.47
 
 # setting up the linux user
 RUN useradd -b /opt -m -s /bin/sh -d ${INSTALL_DIR} ${WILDFLY_USER} && echo ${WILDFLY_USER}:${WILDFLY_PASS} | chpasswd
-USER serveradmin
+
 
 # download wildfly 
 RUN curl -O https://download.jboss.org/wildfly/${WILDFLY_VERSION}/wildfly-${WILDFLY_VERSION}.zip \
@@ -33,7 +33,7 @@ RUN curl -O https://download.jboss.org/wildfly/${WILDFLY_VERSION}/wildfly-${WILD
     && rm wildfly-${WILDFLY_VERSION}.zip \
     && chown -R ${WILDFLY_USER}:${WILDFLY_PASS} /opt \
     && chmod a+x ${WILDFLY_HOME}/bin/standalone.sh \
-    && chmod -R a+rw ${INSTALL_DIR}
+    && chmod -R 777 ${INSTALL_DIR}
 
 # adding the user to the wildfly
 RUN ${WILDFLY_HOME}/bin/add-user.sh -u ${WILDFLY_USER} -p ${WILDFLY_PASS} --silent
