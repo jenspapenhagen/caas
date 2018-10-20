@@ -1,6 +1,6 @@
 FROM base/java
 
-LABEL maintainer="Jens Papenhagen <jens.papenhagen@web.de>" description="Java EE8 Full & Web Distribution"
+LABEL maintainer="Jens Papenhagen <jens.papenhagen@web.de>" description="Wildfly 14.0.1Final with datasource to an extern Mariadb/MySQL"
 
 # Wildfly Appserver
 ENV INSTALL_DIR /opt
@@ -26,20 +26,21 @@ ENV MYSQL_CONNECTOR 5.1.47
 # setting up the linux user
 RUN useradd -b /opt -m -s /bin/sh -d ${INSTALL_DIR} ${WILDFLY_USER} && echo ${WILDFLY_USER}:${WILDFLY_PASS} | chpasswd
 
+
 # download wildfly 
 RUN curl -O https://download.jboss.org/wildfly/${WILDFLY_VERSION}/wildfly-${WILDFLY_VERSION}.zip \
     && unzip wildfly-${WILDFLY_VERSION}.zip -d ${INSTALL_DIR} \
     && rm wildfly-${WILDFLY_VERSION}.zip \
     && chown -R ${WILDFLY_USER}:${WILDFLY_PASS} /opt \
     && chmod a+x ${WILDFLY_HOME}/bin/standalone.sh \
-    && chmod -R a+rw ${INSTALL_DIR}
+    && chmod -R 777 ${INSTALL_DIR}
 
 # adding the user to the wildfly
-RUN {WILDFLY_HOME}/bin/add-user.sh -u ${WILDFLY_USER} -p ${WILDFLY_PASS} --silent
+RUN ${WILDFLY_HOME}/bin/add-user.sh -u ${WILDFLY_USER} -p ${WILDFLY_PASS} --silent
 
-# Configure Wildfly server and dry run it to adding the datasrouce
+# Configure Wildfly server and dry run it to adding the datasource
 RUN echo "=> Starting WildFly server" && \
-        bash -c '$JBOSS_HOME/bin/standalone.sh &' && \
+        bash -c '$WILDFLY_HOME/bin/standalone.sh &' && \
     echo "=> Waiting for the server to boot" && \
         bash -c 'until `$JBOSS_CLI -c ":read-attribute(name=server-state)" 2> /dev/null | grep -q running`; do echo `$JBOSS_CLI -c ":read-attribute(name=server-state)" 2> /dev/null`; sleep 1; done' && \
     echo "=> Downloading MySQL driver/connector form Maven" && \
@@ -63,9 +64,8 @@ RUN echo "=> Starting WildFly server" && \
     echo "=> Shutting down WildFly" && \
         $JBOSS_CLI --connect --command=":shutdown" && \ 
     echo "=> clean up"&& \
-        rm -rf $JBOSS_HOME/standalone/configuration/standalone_xml_history/ $JBOSS_HOME/standalone/log/* && \ 
+        rm -rf $WILDFLY_HOME/standalone/configuration/standalone_xml_history/ $WILDFLY_HOME/standalone/log/* && \ 
         rm -f /tmp/*.jar
 
-USER serveradmin
 ENTRYPOINT ${WILDFLY_HOME}/bin/standalone.sh  -c=standalone-full.xml -b=0.0.0.0 -bmanagement=0.0.0.0
 EXPOSE 8080 9990
