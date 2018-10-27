@@ -16,7 +16,6 @@
 package eu.itech.caas.boundary;
 
 import eu.itech.caas.control.JsonCollectors;
-import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -50,6 +49,7 @@ public class PingsResource {
         return builder.build();
     }
 
+    
     @GET
     @Path("/system-properties")
     public JsonObject systemProperties() {

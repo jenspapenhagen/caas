@@ -39,6 +39,7 @@ public class CaasPu {
         o.put(PERSISTENCE_UNIT + ".hibernate.show_sql", "false");
         o.put(PERSISTENCE_UNIT + ".hibernate.hbm2ddl.auto", "create-drop");
         o.put(PERSISTENCE_UNIT + ".hibernate.jdbc.batch_size", "0");
+        
         // Overwrite the property for Glassfish
         o.put(PERSISTENCE_UNIT + ".hibernate.transaction.jta.platform", "org.apache.openejb.hibernate.OpenEJBJtaPlatform");
 
@@ -61,7 +62,6 @@ public class CaasPu {
         o.put("javax.persistence.jdbc.url", "jdbc:hsqldb:mem:" + DATASOURCE_MANAGED);
 
         JPA_IN_MEMORY = o;
-
     }
 
     public final static Map<String, String> CMT_IN_MEMORY;

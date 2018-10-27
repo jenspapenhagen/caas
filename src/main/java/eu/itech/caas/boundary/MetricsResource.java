@@ -16,6 +16,7 @@
 package eu.itech.caas.boundary;
 
 import eu.itech.caas.control.ServerWatch;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -29,12 +30,25 @@ import javax.ws.rs.core.MediaType;
  *
  * @author airhacks.com
  */
-@Path("health")
+@Path("metrics")
+@ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
-public class HealthResource {
+public class MetricsResource {
 
     @Inject
     ServerWatch watch;
+
+    @GET
+    public JsonObject metric() {
+        return Json.createObjectBuilder()
+                .add("application", "caas-service")
+                .add("component", "MetricsResource")
+                .add("units", "request")
+                .add("suffix", "total")
+                .add("value", String.valueOf(this.watch.availableMemoryInMB()))
+                .build();
+    }
+    
 
     @GET
     @Path("/start-time")
@@ -53,7 +67,7 @@ public class HealthResource {
         builder.add("Available memory in mb", this.watch.availableMemoryInMB()).
                 add("Used memory in mb", this.watch.usedMemoryInMb()).
                 add("Memory at start time", this.watch.usedMemoryInMbAtStartTime());
-        
+
         return builder.build();
     }
 
