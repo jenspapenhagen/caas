@@ -35,18 +35,15 @@ import javax.json.JsonObject;
 public class ServerWatch {
 
     private ZonedDateTime startTime;
-    private MemoryUsage heapUsageAtStartTime;
     private MemoryMXBean memoryMxBean;
 
     @PostConstruct
     public void initialize() {
         this.initializeStartTime();
         this.memoryMxBean = ManagementFactory.getMemoryMXBean();
-        this.heapUsageAtStartTime = this.memoryMxBean.getHeapMemoryUsage();
-
     }
 
-    void initializeStartTime() {
+    private void initializeStartTime() {
         this.startTime = ZonedDateTime.now();
     }
 
@@ -65,10 +62,6 @@ public class ServerWatch {
         return asMb(current.getUsed());
     }
 
-    public String usedMemoryInMbAtStartTime() {
-        return this.heapUsageAtStartTime.toString();
-    }
-
     public JsonObject osInfo() {
         OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
         return Json.createObjectBuilder().
@@ -77,11 +70,18 @@ public class ServerWatch {
                 add("Architecture", osBean.getArch()).
                 add("OS Name", osBean.getName()).
                 add("Version", osBean.getVersion()).build();
-
     }
 
-    double asMb(long bytes) {
-        return bytes / 1024 / 1024;
+    /**
+     * This methode give back MB with out divide two times 1024 with double.
+     * This getting unexcact
+     *
+     * @param bytes
+     * @return a double in Megabyte
+     */
+    private double asMb(long bytes) {
+        // 1024 * 1024 = 1048576
+        return bytes / 1048576;
     }
 
 }
