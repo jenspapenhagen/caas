@@ -43,7 +43,7 @@ public class CatalogResource {
     @Inject
     private ProductDao dao;
 
-    private NumberFormat currenyFormatEU = NumberFormat.getCurrencyInstance(java.util.Locale.GERMANY);
+    private final NumberFormat currenyFormatEU = NumberFormat.getCurrencyInstance(java.util.Locale.GERMANY);
 
     /**
      * This Methode giveback the Post Tax Price (Nettopreis) of a given

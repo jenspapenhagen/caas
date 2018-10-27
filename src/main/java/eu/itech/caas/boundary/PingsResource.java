@@ -44,20 +44,23 @@ public class PingsResource {
     @Path("/echo/{echo}")
     public JsonObject echo(@PathParam("echo") String param) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
-        builder.add("output", param);
+        builder.add("echo", param);
         
         return builder.build();
     }
 
     
+    //expose in production
     @GET
     @Path("/system-properties")
     public JsonObject systemProperties() {
         Properties properties = System.getProperties();
         Set<Map.Entry<Object, Object>> entries = properties.entrySet();
         return entries.stream().collect(JsonCollectors.toJsonBuilder()).build();
+
     }
 
+     //expose in production
     @GET
     @Path("/environment-variables")
     public JsonObject environmentVariables() {
@@ -65,6 +68,7 @@ public class PingsResource {
         return environment.entrySet().stream().collect(JsonCollectors.toJsonBuilder()).build();
     }
 
+     //expose in production
     @GET
     @Path("/jndi/{namespace}")
     public JsonObject jndi(@PathParam("namespace") String namespace) throws NamingException {

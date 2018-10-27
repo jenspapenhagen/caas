@@ -39,16 +39,28 @@ public class MetricsResource {
     ServerWatch watch;
 
     @GET
+    @Path("usedmemory")
     public JsonObject metric() {
         return Json.createObjectBuilder()
                 .add("application", "caas-service")
-                .add("component", "MetricsResource")
-                .add("units", "request")
-                .add("suffix", "total")
+                .add("component", "jvmusedmemory")
+                .add("units", "bytes")
+                .add("suffix", "size")
+                .add("value", String.valueOf(this.watch.usedMemoryInMb()))
+                .build();
+    }
+
+    @GET
+    @Path("availablememory")
+    public JsonObject additional() {
+        return Json.createObjectBuilder()
+                .add("application", "caas-service")
+                .add("component", "jvmavailablememory")
+                .add("units", "bytes")
+                .add("suffix", "size")
                 .add("value", String.valueOf(this.watch.availableMemoryInMB()))
                 .build();
     }
-    
 
     @GET
     @Path("/start-time")
@@ -60,17 +72,8 @@ public class MetricsResource {
         return builder.build();
     }
 
-    @GET
-    @Path("/current-memory")
-    public JsonObject availableHeap() {
-        JsonObjectBuilder builder = Json.createObjectBuilder();
-        builder.add("Available memory in mb", this.watch.availableMemoryInMB()).
-                add("Used memory in mb", this.watch.usedMemoryInMb()).
-                add("Memory at start time", this.watch.usedMemoryInMbAtStartTime());
-
-        return builder.build();
-    }
-
+   
+     //expose in production
     @GET
     @Path("/os-info")
     public JsonObject osInfo() {
