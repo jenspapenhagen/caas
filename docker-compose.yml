@@ -1,0 +1,15 @@
+version: '3.0'
+services:
+  prometheus:
+    image: base/prometheus
+    ports:
+    - "9090:9090"
+    links:
+    - app
+  app:
+    image: base/app
+    env_file: metrics.env
+    ports: 
+	  - "8282:8080"
+	
+	
