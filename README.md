@@ -9,4 +9,10 @@ this get move back to my own github account.
 and will be use for testing new stuff
 
 
+Why a "withoutdb" branch?
+- this is only for testing the environment of the workspace and for testing  
 
+what to do?
+- build up a docker composer
+- impl. prometheus endpoint
+- 
