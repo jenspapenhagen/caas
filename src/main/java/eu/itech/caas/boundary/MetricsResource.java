@@ -27,8 +27,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
+ * Prometheus Endpoint with 2 simple metrics
  *
- * @author airhacks.com
+ * this is a testrun for not use io.prometheus dependency For easyer and
+ * complexer metics better use it. but for this very basic and small metrics its
+ * fine
+ *
+ * @author Jens Papenhagen
  */
 @Path("metrics")
 @ApplicationScoped
@@ -38,6 +43,12 @@ public class MetricsResource {
     @Inject
     ServerWatch watch;
 
+    /**
+     * This is a basic metic for memory usage of the heap that is used for
+     * object allocation.
+     *
+     * @return a JsonObject in Prometheus format
+     */
     @GET
     @Path("usedmemory")
     public JsonObject metric() {
@@ -50,6 +61,11 @@ public class MetricsResource {
                 .build();
     }
 
+    /**
+     * This is a basic metic for memory available of the heap
+     *
+     * @return a JsonObject in Prometheus format
+     */
     @GET
     @Path("availablememory")
     public JsonObject additional() {
@@ -62,6 +78,11 @@ public class MetricsResource {
                 .build();
     }
 
+    /**
+     * This methode give backt he starting time of this service
+     *
+     * @return a JsonObject in flat JSON format
+     */
     @GET
     @Path("/start-time")
     @Produces(MediaType.TEXT_PLAIN)
@@ -72,8 +93,14 @@ public class MetricsResource {
         return builder.build();
     }
 
-   
-     //expose in production
+    /**
+     * WARNING 
+     * do _NOT_ expose in production
+     * 
+     * this methode is showing all Infos form the OS
+     * 
+     * @return  JsonObject in flat JSON format
+     */
     @GET
     @Path("/os-info")
     public JsonObject osInfo() {
