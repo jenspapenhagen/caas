@@ -30,13 +30,21 @@ import org.slf4j.LoggerFactory;
 public class AuthenticationService {
 
     private static final Logger L = LoggerFactory.getLogger(AuthenticationService.class);
-    
+
     @Inject
     private LDAPService ldpaService;
 
+    /**
+     * authenticate with a base64 string of user:password for base-auth
+     *
+     * @param authCredentials a base64 string of user:password for base-auth
+     * @return true if success
+     */
     public boolean authenticate(String authCredentials) {
-
         if (null == authCredentials) {
+            return false;
+        }
+        if (authCredentials.isEmpty()) {
             return false;
         }
         // header value format will be "Basic encodedstring" for Basic
@@ -62,10 +70,24 @@ public class AuthenticationService {
 //        if(!username.equalsIgnoreCase("prometheus")){
 //            return false;
 //        }
-//        ldpaService.connect(username,password, "cn=users");
+//        ldpaService.connect(username,password,"cn=users");
 //        return ldpaService.authentication();
-                
         //TODO WARNING HARDCODED PASSWORD
         return "prometheus".equals(username) && "prometheus".equals(password);
+    }
+
+    public boolean authenticate(String username, String password) {
+        if (username == null || password == null) {
+            return false;
+        }
+        if (username.isEmpty() || password.isEmpty()) {
+            return false;
+        }
+
+        //using a LDAP Server
+//        ldpaService.connect(username,password,"cn=users");
+//        return ldpaService.authentication();
+        //TODO WARNING HARDCODED PASSWORD
+        return "admin".equals(username) && "admin".equals(password);
     }
 }

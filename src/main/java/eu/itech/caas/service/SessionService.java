@@ -24,6 +24,10 @@ public class SessionService implements Serializable {
         return (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
     }
 
+    public static HttpServletRequest getRequest() {
+        return (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+    }
+
     public String getUserName() {
         HttpSession session = getSession();
         if (session == null) {
@@ -38,7 +42,7 @@ public class SessionService implements Serializable {
      * @return a IP-Address as String or null for altern user input
      */
     public String getIp() {
-        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        HttpServletRequest request = getRequest();
         String xForwaredFor = request.getHeader("X-FORWARDED-FOR");
         if (xForwaredFor == null) {
             return request.getRemoteAddr();
@@ -53,11 +57,12 @@ public class SessionService implements Serializable {
         return xForwaredFor;
     }
 
-    public String distroySession() {
-        //set Session invalid
-        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-
-        return "/pages/login?faces-redirect=true";
+    public void distroySession() {
+        HttpSession session = getSession();
+        if (session == null) {
+            return;
+        }
+        session.invalidate();
     }
 
 }

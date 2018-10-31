@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core" >
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>Login</title>
+        <link rel="icon" type="image/x-icon" href="resources/images/favicon.ico"/>
+    </h:head>
+    <h:body>
+        <h:form id="login_form">
+            <h:panelGrid columns="2" cellpadding="5">
+                <h:outputLabel for="username" value="Username:" />
+                <h:inputText id="username" value="#{login.username}" required="true" label="username" />
+
+                <h:outputLabel for="password" value="Password:" />
+                <h.inputSecret  id="password" value="#{login.password}" required="true" label="password" />
+
+                <f:facet name="footer">
+                    <h:commandButton value="Login" action="#{login.login()}" />
+                </f:facet>  
+            </h:panelGrid>
+        </h:form>
+    </h:body>
+</html>
