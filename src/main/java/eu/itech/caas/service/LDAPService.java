@@ -18,12 +18,31 @@ import org.slf4j.LoggerFactory;
 public class LDAPService {
 
     private static final Logger L = LoggerFactory.getLogger(LDAPService.class);
-    
+
+    private final Hashtable<String, String> env;
+
     /**
-     * Authentication agains an or many LDAP Server
-     * WARNING
-     * add the right Address of your LDAP Servere here.
-     * 
+     * WARNING add the right
+     * Address of your LDAP Servere here.
+     */
+    public LDAPService() {
+        //TODO change the URL Active Directory
+        //for adding more than one AD use a plus.
+        //example env.put(Context.PROVIDER_URL, "ldap://hostone:636/" + "ldap://hosttwo:636/");
+        env = new Hashtable<>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, "ldap://your.ad.server.here:636"); // 636 for SSL | 389 for no SSL
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+        env.put(Context.REFERRAL, "follow");
+        env.put(Context.SECURITY_PROTOCOL, "ssl"); // Specify SSL    
+        
+        //yes HashTable is a obsolete Collection but InitialDirContext is requesting one.
+    }
+
+    /**
+     * Authentication agains an or many LDAP Server WARNING add the right
+     * Address of your LDAP Servere here.
+     *
      * @param user
      * @param password
      * @return false for login Problems (like worng password), true for working
@@ -40,15 +59,6 @@ public class LDAPService {
             return false;
         }
 
-        //TODO change the URL Active Directory
-        //for adding more than one AD use a plus.
-        //example env.put(Context.PROVIDER_URL, "ldap://hostone:636/" + "ldap://hosttwo:636/");
-        Hashtable<String, String> env = new Hashtable<>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, "ldap://your.ad.server.here:636"); // 636 for SSL | 389 for no SSL
-        env.put(Context.SECURITY_AUTHENTICATION, "simple");
-        env.put(Context.REFERRAL, "follow");
-        env.put(Context.SECURITY_PROTOCOL, "ssl"); // Specify SSL
         env.put(Context.SECURITY_PRINCIPAL, user);
         env.put(Context.SECURITY_CREDENTIALS, password);
 
@@ -56,7 +66,7 @@ public class LDAPService {
         DirContext ctx;
         try {
             ctx = new InitialDirContext(env);
-            L.info("Used this LDAP Server {}",ctx.getEnvironment().get(Context.PROVIDER_URL));
+            L.info("Used this LDAP Server {}", ctx.getEnvironment().get(Context.PROVIDER_URL));
             ctx.close();
         } catch (NamingException ex) {
             L.error("Login Problem: {}", ex);
@@ -64,6 +74,41 @@ public class LDAPService {
         }
 
         return true;
+    }
+    
+    /**
+     * Authentication the user Prometheus agains an or many LDAP Server.
+     * 
+     * @param password
+     * @return false for login Problems (like worng password), true for working
+     * login cred.
+     */
+    public boolean authenticationPrometheus(String password){
+        //no login cred.
+        if (password == null) {
+            L.error("password was null");
+            return false;
+        }
+        if (password.isEmpty()) {
+            L.error("password was empty");
+            return false;
+        }
+
+        env.put(Context.SECURITY_PRINCIPAL, "prometheus");
+        env.put(Context.SECURITY_CREDENTIALS, password);
+
+        // attempt to authenticate
+        DirContext ctx;
+        try {
+            ctx = new InitialDirContext(env);
+            L.info("Used this LDAP Server {}", ctx.getEnvironment().get(Context.PROVIDER_URL));
+            ctx.close();
+        } catch (NamingException ex) {
+            L.error("Login Problem: {}", ex);
+            return false;
+        }
+        
+         return true;
     }
 
 }

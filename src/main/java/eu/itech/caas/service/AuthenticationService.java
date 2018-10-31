@@ -59,7 +59,10 @@ public class AuthenticationService {
         final String password = tokenizer.nextToken();
 
         //using a LDAP Server
-        //return ldpaService.authentication(username, password);
+//        if(!username.equalsIgnoreCase("prometheus")){
+//            return false;
+//        }
+//        return ldpaService.authenticationPrometheus(password);
                 
         //TODO WARNING HARDCODED PASSWORD
         return "prometheus".equals(username) && "prometheus".equals(password);
