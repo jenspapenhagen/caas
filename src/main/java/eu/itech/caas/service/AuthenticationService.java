@@ -18,6 +18,7 @@ package eu.itech.caas.service;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.StringTokenizer;
+import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,9 @@ import org.slf4j.LoggerFactory;
 public class AuthenticationService {
 
     private static final Logger L = LoggerFactory.getLogger(AuthenticationService.class);
+    
+    @Inject
+    private LDAPService ldpaService;
 
     public boolean authenticate(String authCredentials) {
 
@@ -42,8 +46,8 @@ public class AuthenticationService {
         try {
             byte[] decodedBytes = Base64.getDecoder().decode(encodedUserPassword);
             usernameAndPassword = new String(decodedBytes, "UTF-8");
-        } catch (IOException e) {
-            L.error("IOException on decoding: {}", e.getMessage());
+        } catch (IOException ex) {
+            L.error("IOException on decoding: {}", ex.getMessage());
         }
 
         if (usernameAndPassword == null) {
@@ -54,6 +58,9 @@ public class AuthenticationService {
         final String username = tokenizer.nextToken();
         final String password = tokenizer.nextToken();
 
+        //using a LDAP Server
+        //return ldpaService.authentication(username, password);
+                
         //TODO WARNING HARDCODED PASSWORD
         return "prometheus".equals(username) && "prometheus".equals(password);
     }
