@@ -18,6 +18,8 @@ package eu.itech.caas.service;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.StringTokenizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * AuthenticationService
@@ -25,6 +27,8 @@ import java.util.StringTokenizer;
  * @author jens.papenhagen
  */
 public class AuthenticationService {
+
+    private static final Logger L = LoggerFactory.getLogger(AuthenticationService.class);
 
     public boolean authenticate(String authCredentials) {
 
@@ -39,10 +43,10 @@ public class AuthenticationService {
             byte[] decodedBytes = Base64.getDecoder().decode(encodedUserPassword);
             usernameAndPassword = new String(decodedBytes, "UTF-8");
         } catch (IOException e) {
-            e.printStackTrace();
+            L.error("IOException on decoding: {}", e.getMessage());
         }
-        
-        if(usernameAndPassword == null){
+
+        if (usernameAndPassword == null) {
             return false;
         }
         //split the user:password into user and password

@@ -14,3 +14,8 @@ scrape_configs:
     basic_auth:
       username: prometheus
       password: "prometheus"
+	dns_sd_configs:
+    - names:
+      - 'localhost'
+      type: 'A'
+      port: 443
