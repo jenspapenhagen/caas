@@ -5,7 +5,7 @@
     </welcome-file-list>
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
-        <filter-class>eu.itech.caas.assist.RestAuthenticationFilter</filter-class>
+        <filter-class>eu.itech.caas.filter.RestAuthenticationFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>AuthenticationFilter</filter-name>

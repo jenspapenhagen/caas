@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 jay.
+ * Copyright 2018 jens.papenhagen.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eu.itech.caas.assist;
+package eu.itech.caas.filter;
 
 import eu.itech.caas.service.AuthenticationService;
 import java.io.IOException;
 import javax.inject.Inject;
+import javax.servlet.Filter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -32,20 +33,18 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author jens.papenhagen
  */
-public class RestAuthenticationFilter implements javax.servlet.Filter {
-    
+public class RestAuthenticationFilter implements Filter {
+
     @Inject
     private AuthenticationService authService;
 
     public static final String AUTHENTICATION_HEADER = "Authorization";
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain filter) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filter) throws IOException, ServletException {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             String authCredentials = httpServletRequest.getHeader(AUTHENTICATION_HEADER);
-
 
             if (authService.authenticate(authCredentials)) {
                 filter.doFilter(request, response);
