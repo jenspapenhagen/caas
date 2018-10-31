@@ -23,8 +23,6 @@ import java.time.ZonedDateTime;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.json.Json;
-import javax.json.JsonObject;
 
 /**
  *
@@ -35,12 +33,16 @@ import javax.json.JsonObject;
 public class ServerWatch {
 
     private ZonedDateTime startTime;
+
     private MemoryMXBean memoryMxBean;
+
+    private OperatingSystemMXBean osBean;
 
     @PostConstruct
     public void initialize() {
         this.initializeStartTime();
         this.memoryMxBean = ManagementFactory.getMemoryMXBean();
+        this.osBean = ManagementFactory.getOperatingSystemMXBean();
     }
 
     private void initializeStartTime() {
@@ -62,14 +64,32 @@ public class ServerWatch {
         return asMb(current.getUsed());
     }
 
-    public JsonObject osInfo() {
-        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
-        return Json.createObjectBuilder().
-                add("System Load Average", osBean.getSystemLoadAverage()).
-                add("Available CPUs", osBean.getAvailableProcessors()).
-                add("Architecture", osBean.getArch()).
-                add("OS Name", osBean.getName()).
-                add("Version", osBean.getVersion()).build();
+    /**
+     * this methode is give back the System Load Average
+     *
+     * @return the system load average; or "not available"
+     */
+    public String systemLoadAverage() {
+        if (osBean.getSystemLoadAverage() < 0) {
+            return "not available";
+        }
+        return String.valueOf(osBean.getSystemLoadAverage());
+    }
+
+    public int availableProcessors() {
+        return osBean.getAvailableProcessors();
+    }
+
+    public String osName() {
+        return osBean.getName();
+    }
+
+    public String osArchitecture() {
+        return osBean.getArch();
+    }
+
+    public String osVersion() {
+        return osBean.getVersion();
     }
 
     /**

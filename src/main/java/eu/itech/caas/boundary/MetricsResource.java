@@ -16,11 +16,14 @@
 package eu.itech.caas.boundary;
 
 import eu.itech.caas.control.ServerWatch;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -43,17 +46,80 @@ public class MetricsResource {
     @Inject
     ServerWatch watch;
 
+    private List<String> metricParts;
+
+    private String value;
+
+    public static final String APPLICATION = "application";
+
+    public static final String COMPONENT = "component";
+
+    public static final String UNITS = "units";
+
+    public static final String SUFFIX = "suffix";
+
+    /**
+     * This is a basic metic
+     *
+     * @return a JsonObject in Prometheus format
+     */
+    @GET
+    public String metric() {
+        metricParts = new ArrayList<>();
+
+        List<String> output = new ArrayList<>();
+        fillMetric(usedmemory());
+        output.add(toMetric());
+
+        fillMetric(availablememory());
+        output.add(toMetric());
+
+        fillMetric(bootTime());
+        output.add(toMetric());
+
+        fillMetric(systemLoadAverage());
+        output.add(toMetric());
+
+        fillMetric(availableProcessors());
+        output.add(toMetric());
+
+        fillMetric(osName());
+        output.add(toMetric());
+
+        fillMetric(osArchitecture());
+        output.add(toMetric());
+
+        fillMetric(osVersion());
+        output.add(toMetric());
+
+        //output without brackets and commas
+        StringBuilder builder = new StringBuilder();
+        output.forEach(builder::append);
+
+        return builder.toString();
+    }
+
+    private void fillMetric(JsonObject input) {
+
+        String application = input.getString(APPLICATION, null);
+        String component = input.getString(COMPONENT, null);
+        String units = input.getString(UNITS, null);
+        String suffix = input.getString(SUFFIX, null);
+
+        this.value = input.getString("value", null);
+
+        this.metricParts = Arrays.asList(application, component, units, suffix);
+    }
+
     /**
      * This is a basic metic for memory usage of the heap that is used for
      * object allocation.
      *
      * @return a JsonObject in Prometheus format
      */
-    @GET
-    @Path("usedmemory")
-    public JsonObject metric() {
+    private JsonObject usedmemory() {
         return Json.createObjectBuilder()
-                .add("application", "caas-service")
+                .add("application", "caasservice")
                 .add("component", "jvmusedmemory")
                 .add("units", "bytes")
                 .add("suffix", "size")
@@ -66,11 +132,9 @@ public class MetricsResource {
      *
      * @return a JsonObject in Prometheus format
      */
-    @GET
-    @Path("availablememory")
-    public JsonObject additional() {
+    private JsonObject availablememory() {
         return Json.createObjectBuilder()
-                .add("application", "caas-service")
+                .add("application", "caasservice")
                 .add("component", "jvmavailablememory")
                 .add("units", "bytes")
                 .add("suffix", "size")
@@ -79,32 +143,99 @@ public class MetricsResource {
     }
 
     /**
-     * This methode give backt he starting time of this service
+     * This methode give backt the starting time of this service
      *
-     * @return a JsonObject in flat JSON format
+     * @return a JsonObject in Prometheus format
      */
-    @GET
-    @Path("/start-time")
-    @Produces(MediaType.TEXT_PLAIN)
-    public JsonObject bootTime() {
-        JsonObjectBuilder builder = Json.createObjectBuilder();
-        builder.add("boottime", watch.getDateTime().toString());
-
-        return builder.build();
+    private JsonObject bootTime() {
+        return Json.createObjectBuilder().add("application", "caasservice")
+                .add("component", "bootup")
+                .add("units", "seconds")
+                .add("suffix", "time")
+                .add("value", String.valueOf(watch.getDateTime().toEpochSecond()))
+                .build();
     }
 
     /**
-     * WARNING 
-     * do _NOT_ expose in production
-     * 
-     * this methode is showing all Infos form the OS
-     * 
-     * @return  JsonObject in flat JSON format
+     * this methode give back the System Load Average
+     *
+     * @return a JsonObject in Prometheus format
      */
-    @GET
-    @Path("/os-info")
-    public JsonObject osInfo() {
-        return this.watch.osInfo();
+    private JsonObject systemLoadAverage() {
+        return Json.createObjectBuilder().add("application", "caasservice")
+                .add("component", "systemLoadAverage")
+                .add("units", "seconds")
+                .add("suffix", "time")
+                .add("value", this.watch.systemLoadAverage())
+                .build();
+    }
+
+    /**
+     * this methode give back the available Processors/cores
+     *
+     * @return a JsonObject in Prometheus format
+     */
+    private JsonObject availableProcessors() {
+        return Json.createObjectBuilder().add("application", "caasservice")
+                .add("component", "availableProcessors")
+                .add("units", "count")
+                .add("suffix", "total")
+                .add("value", String.valueOf(this.watch.availableProcessors()))
+                .build();
+    }
+
+    /**
+     * this methode give back the Name of the underlaying Operation System
+     *
+     * @return a JsonObject in Prometheus format
+     */
+    private JsonObject osName() {
+        return Json.createObjectBuilder().add("application", "caasservice")
+                .add("component", "osName")
+                .add("value", this.watch.osName())
+                .build();
+    }
+
+    /**
+     * this methode give back the Architecture of the underlaying Operation
+     * System
+     *
+     * @return a JsonObject in Prometheus format
+     */
+    private JsonObject osArchitecture() {
+        return Json.createObjectBuilder().add("application", "caasservice")
+                .add("component", "osArchitecture")
+                .add("value", this.watch.osArchitecture())
+                .build();
+    }
+
+    /**
+     * this methode give back the Verison of the underlaying Operation System
+     *
+     * @return a JsonObject in Prometheus format
+     */
+    private JsonObject osVersion() {
+        return Json.createObjectBuilder().add("application", "caasservice")
+                .add("component", "osVersion")
+                .add("value", this.watch.osVersion())
+                .build();
+    }
+
+    /**
+     * this methode convert a strict JsonObject to a "Prometheus format" String
+     *
+     * @return a "Prometheus format" String
+     */
+    private String toMetric() {
+        String metric = this.metricParts.stream().
+                filter(s -> s != null).
+                collect(Collectors.joining("_"));
+        //reset value to null if not forund
+        if (value == null) {
+            value = "";
+        }
+
+        return metric + " " + value + "\n";
     }
 
 }
