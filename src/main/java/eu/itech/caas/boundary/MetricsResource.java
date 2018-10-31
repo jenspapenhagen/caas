@@ -163,9 +163,8 @@ public class MetricsResource {
      */
     private JsonObject systemLoadAverage() {
         return Json.createObjectBuilder().add("application", "caasservice")
-                .add("component", "systemLoadAverage")
-                .add("units", "seconds")
-                .add("suffix", "time")
+                .add("component", "systemLoad")
+                .add("suffix", "average")
                 .add("value", this.watch.systemLoadAverage())
                 .build();
     }
