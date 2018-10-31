@@ -36,7 +36,10 @@ public class LDAPService {
     private String defaultDisplayName;
 
     /**
-     * WARNING add the right Address of your LDAP Servere here.
+     * WARNING add the right Addresses of your LDAP Servere here.
+     *
+     * the CRUD for User is Copyright (c) 2014 Patrick Stillhart
+     * https://github.com/arcs-/LDAP-Java-api
      */
     public LDAPService() {
         //TODO change the URL Active Directory
@@ -55,8 +58,12 @@ public class LDAPService {
      *
      * @param user
      * @param password
-     * @param defaultDisplayName defaultDisplayname example:
-     * 'cn=employee,cn=users,ou=school,dc=openiam,dc=com'
+     * @param defaultDisplayName defaultDisplayname
+     *
+     * Example for a long displayName
+     * "cn=employee,cn=users,ou=school,dc=openiam,dc=com"
+     *
+     * Example for a short displayName "cn=users"
      */
     public void connect(String user, String password, String defaultDisplayName) {
         //no login cred.
@@ -71,6 +78,7 @@ public class LDAPService {
             return;
         }
         //adding the default DisplayName
+        //is is mostly the Context.SECURITY_PRINCIPAL
         this.defaultDisplayName = defaultDisplayName;
 
         env.put(Context.SECURITY_PRINCIPAL, user);
@@ -83,6 +91,20 @@ public class LDAPService {
             L.error("Login Problem: {}", ex);
             close();
         }
+    }
+
+    /**
+     * this methode is to change the displayName for a wider search
+     * area/filtering by adding an "ou=" or "o=" or "dc=" for more infos:
+     * https://msdn.microsoft.com/en-us/library/cc223499.aspx
+     *
+     * @param displayName Example for a long displayName
+     * "cn=employee,cn=users,ou=school,dc=openiam,dc=com"
+     *
+     * Example for a short displayName "cn=users"
+     */
+    public void changeDisplayName(String displayName) {
+        this.defaultDisplayName = displayName;
     }
 
     /**
@@ -102,20 +124,20 @@ public class LDAPService {
      * Get a User by Uid
      *
      * @param uid
-     *
-     * @return SearchResult for this User Copyright (c) 2014 Patrick Stillhart
+     * @return SearchResult for this User or null for found more than one
+     * user/for not connected/
      */
     public SearchResult getUser(String uid) {
+        if (!connected) {
+            L.error("connection is not active");
+            return null;
+        }
         String searchFilter = "(&(objectClass=person)(uid=" + uid + "))";
 
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
         try {
-            if (!connected) {
-                L.error("connection is not active");
-                return null;
-            }
             NamingEnumeration<SearchResult> results = connection.search(this.defaultDisplayName, searchFilter, searchControls);
             if (results.hasMoreElements()) {
                 SearchResult searchResult = results.nextElement();
@@ -138,9 +160,13 @@ public class LDAPService {
      * Deletes an user
      *
      * @param uid the uid
-     * @return true if successful Copyright (c) 2014 Patrick Stillhart
+     * @return true if successful
      */
     public boolean deleteUser(String uid) {
+        if (!connected) {
+            L.error("connection is not active");
+            return false;
+        }
         try {
             connection.destroySubcontext(uid);
             return true;
@@ -155,9 +181,13 @@ public class LDAPService {
      *
      * @param uid the uid from user to modify
      * @param mods a list with modifications
-     * @return true if successful Copyright (c) 2014 Patrick Stillhart
+     * @return true if successful
      */
     public boolean updateUser(String uid, ModificationItem[] mods) {
+        if (!connected) {
+            L.error("connection is not active");
+            return false;
+        }
         try {
             connection.modifyAttributes("uid=" + uid + "," + this.defaultDisplayName, mods);
             return true;
@@ -172,10 +202,13 @@ public class LDAPService {
      *
      * @param uid the uid (same as in the list)
      * @param entry a list with attributes
-     * @return true if successful 
-     * Copyright (c) 2014 Patrick Stillhart
+     * @return true if successful
      */
     public boolean addUser(String uid, Attributes entry) {
+        if (!connected) {
+            L.error("connection is not active");
+            return false;
+        }
         try {
             connection.createSubcontext("uid=" + uid + "," + this.defaultDisplayName, entry);
             L.error("AddUser: added entry {}.", uid);
@@ -193,12 +226,14 @@ public class LDAPService {
      * Accepts custom filters and returns there result
      * http://www.google.com/support/enterprise/static/gapps/docs/admin/en/gads/admin/ldap.5.4.html
      *
-     * @param searchFilter a ldap search filter (e.g.
-     * '(objectClass=posixaccount)')
-     * @return List<SearchResult> with all results / null for nothing Copyright
-     * (c) 2014 Patrick Stillhart
+     * @param searchFilter a ldap search filter "(objectClass=posixaccount)"
+     * @return List<SearchResult> with all results / null for nothing
      */
     public List<SearchResult> getResultByCustomFilter(String searchFilter) throws NamingException {
+        if (!connected) {
+            L.error("connection is not active");
+            return null;
+        }
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
