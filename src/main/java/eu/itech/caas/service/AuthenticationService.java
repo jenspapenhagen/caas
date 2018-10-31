@@ -62,7 +62,8 @@ public class AuthenticationService {
 //        if(!username.equalsIgnoreCase("prometheus")){
 //            return false;
 //        }
-//        return ldpaService.authenticationPrometheus(password);
+//        ldpaService.connect(username,password, "cn=employee,cn=users,ou=school,dc=openiam,dc=com");
+//        return ldpaService.authentication();
                 
         //TODO WARNING HARDCODED PASSWORD
         return "prometheus".equals(username) && "prometheus".equals(password);
