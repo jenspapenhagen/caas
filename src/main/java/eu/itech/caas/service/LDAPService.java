@@ -108,6 +108,15 @@ public class LDAPService {
     }
 
     /**
+     * replace with a new LDAP Server you have to use connect after this
+     *
+     * @param ldapURL like "ldap://your.ad.server.here:636"
+     */
+    public void addLDAPServer(String ldapURL) {
+        env.put(Context.PROVIDER_URL, ldapURL);
+    }
+
+    /**
      * Authentication agains an or many LDAP Server WARNING add the right
      * Address of your LDAP Servere here.
      *
