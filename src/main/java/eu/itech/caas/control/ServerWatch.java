@@ -19,6 +19,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.ThreadMXBean;
 import java.time.ZonedDateTime;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -38,11 +39,14 @@ public class ServerWatch {
 
     private OperatingSystemMXBean osBean;
 
+    private ThreadMXBean threadBean;
+
     @PostConstruct
     public void initialize() {
         this.initializeStartTime();
         this.memoryMxBean = ManagementFactory.getMemoryMXBean();
         this.osBean = ManagementFactory.getOperatingSystemMXBean();
+        this.threadBean = ManagementFactory.getThreadMXBean();
     }
 
     private void initializeStartTime() {
@@ -90,6 +94,14 @@ public class ServerWatch {
 
     public String osVersion() {
         return osBean.getVersion();
+    }
+
+    public int treadCount() {
+        return threadBean.getThreadCount();
+    }
+
+    public int peakTradCount() {
+        return threadBean.getPeakThreadCount();
     }
 
     /**

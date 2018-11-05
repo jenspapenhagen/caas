@@ -42,19 +42,11 @@ import javax.ws.rs.core.MediaType;
 public class MetricsResource {
 
     @Inject
-    ServerWatch watch;
+    private ServerWatch watch;
 
     private List<String> metricParts;
 
     private String value;
-
-//    public static final String APPLICATION = "application";
-//
-//    public static final String COMPONENT = "component";
-//
-//    public static final String UNITS = "units";
-//
-//    public static final String SUFFIX = "suffix";
 
     /**
      * This is a basic metic
@@ -65,36 +57,29 @@ public class MetricsResource {
     public String metric() {
         metricParts = new ArrayList<>();
 
-        List<String> output = new ArrayList<>();
-        fillMetric(usedmemory());
-        output.add(toMetric());
-
-        fillMetric(availablememory());
-        output.add(toMetric());
-
-        fillMetric(bootTime());
-        output.add(toMetric());
-
-        fillMetric(systemLoadAverage());
-        output.add(toMetric());
-
-        fillMetric(availableProcessors());
-        output.add(toMetric());
-
-        fillMetric(osName());
-        output.add(toMetric());
-
-        fillMetric(osArchitecture());
-        output.add(toMetric());
-
-        fillMetric(osVersion());
-        output.add(toMetric());
+        List<Metric> metricList = new ArrayList<>();
+        metricList.add(usedmemory());
+        metricList.add(availablememory());
+        metricList.add(bootTime());
+        metricList.add(systemLoadAverage());
+        metricList.add(availableProcessors());
+        metricList.add(osName());
+        metricList.add(osArchitecture());
+        metricList.add(osVersion());
+        metricList.add(treadCount());
+        metricList.add(preakTreadCount());
+        
+        List<String> output = new ArrayList<>();       
+        metricList.stream().forEach(m -> {
+            fillMetric(m);
+            output.add(toMetric());
+        });
 
         //output without brackets and commas
-        StringBuilder builder = new StringBuilder();
-        output.forEach(builder::append);
+        StringBuilder stringBuilder = new StringBuilder();
+        output.forEach(stringBuilder::append);
 
-        return builder.toString();
+        return stringBuilder.toString();
     }
 
     private void fillMetric(Metric input) {
@@ -148,7 +133,7 @@ public class MetricsResource {
      * @return Metric
      */
     private Metric systemLoadAverage() {
-        Metric m = new Metric( "caasservice", "systemLoad", null, "systemLoad");
+        Metric m = new Metric("caasservice", "systemLoad", null, "systemLoad");
         m.setValue(this.watch.systemLoadAverage());
         return m;
     }
@@ -199,6 +184,30 @@ public class MetricsResource {
     }
 
     /**
+     * this methode give back the Thread count of live threads including both
+     * daemon and non-daemon threads.
+     *
+     * @return Metric
+     */
+    private Metric treadCount() {
+        Metric m = new Metric("caasservice", "tread", "count", "total");
+        m.setValue(String.valueOf(this.watch.treadCount()));
+        return m;
+    }
+
+    /**
+     * this methode give back the Thread peak count since the Java virtual
+     * machine started or peak was reset.
+     *
+     * @return Metric
+     */
+    private Metric preakTreadCount() {
+        Metric m = new Metric("caasservice", "tread", "count", "peak");
+        m.setValue(String.valueOf(this.watch.peakTradCount()));
+        return m;
+    }
+
+    /**
      * this methode convert a strict Metric to a "Prometheus format" String
      *
      * @return a "Prometheus format" String
@@ -206,7 +215,7 @@ public class MetricsResource {
     private String toMetric() {
         String outputMetric = this.metricParts.stream().
                 filter(s -> s != null).
-                filter(s-> !s.isEmpty()).
+                filter(s -> !s.isEmpty()).
                 collect(Collectors.joining("_"));
         //reset value to null if not forund
         if (value == null) {
