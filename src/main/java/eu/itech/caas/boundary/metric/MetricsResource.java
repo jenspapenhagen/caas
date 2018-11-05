@@ -68,8 +68,13 @@ public class MetricsResource {
         metricList.add(osVersion());
         metricList.add(treadCount());
         metricList.add(preakTreadCount());
+        metricList.add(classLoadedCount());
+        //add new metics here
         
-        List<String> output = new ArrayList<>();       
+        
+        
+
+        List<String> output = new ArrayList<>();
         metricList.stream().forEach(m -> {
             fillMetric(m);
             output.add(toMetric());
@@ -204,6 +209,18 @@ public class MetricsResource {
     private Metric preakTreadCount() {
         Metric m = new Metric("caasservice", "tread", "count", "peak");
         m.setValue(String.valueOf(this.watch.peakTradCount()));
+        return m;
+    }
+
+    /**
+     * this methode give back the Class number of classes that are currently
+     * loaded in the Java virtual machine.
+     *
+     * @return Metric
+     */
+    private Metric classLoadedCount() {
+        Metric m = new Metric("caasservice", "classLoaded", "count", "total");
+        m.setValue(String.valueOf(this.watch.classLoadedCount()));
         return m;
     }
 

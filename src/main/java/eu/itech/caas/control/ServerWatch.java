@@ -15,6 +15,7 @@
  */
 package eu.itech.caas.control;
 
+import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
@@ -40,6 +41,8 @@ public class ServerWatch {
     private OperatingSystemMXBean osBean;
 
     private ThreadMXBean threadBean;
+    
+    private ClassLoadingMXBean classBean;
 
     @PostConstruct
     public void initialize() {
@@ -47,6 +50,7 @@ public class ServerWatch {
         this.memoryMxBean = ManagementFactory.getMemoryMXBean();
         this.osBean = ManagementFactory.getOperatingSystemMXBean();
         this.threadBean = ManagementFactory.getThreadMXBean();
+        this.classBean = ManagementFactory.getClassLoadingMXBean();
     }
 
     private void initializeStartTime() {
@@ -102,6 +106,10 @@ public class ServerWatch {
 
     public int peakTradCount() {
         return threadBean.getPeakThreadCount();
+    }
+    
+    public int classLoadedCount(){
+        return classBean.getLoadedClassCount();
     }
 
     /**
