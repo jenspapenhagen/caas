@@ -1,5 +1,6 @@
 package eu.itech.caas.service;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -23,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * @author jens.papenhagen
  */
 @Named
-public class LDAPService {
+public class LDAPService implements Serializable{
 
     private static final Logger L = LoggerFactory.getLogger(LDAPService.class);
 

@@ -21,7 +21,10 @@ public class SessionService implements Serializable {
     private static final Logger L = LoggerFactory.getLogger(SessionService.class);
 
     public HttpSession getSession() {
-        return (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+        String testUser = "TestUser";
+        session.setAttribute("username", testUser);
+        return session;
     }
 
     public static HttpServletRequest getRequest() {
@@ -33,6 +36,7 @@ public class SessionService implements Serializable {
         if (session == null) {
             return null;
         }
+
         return session.getAttribute("username").toString();
     }
 

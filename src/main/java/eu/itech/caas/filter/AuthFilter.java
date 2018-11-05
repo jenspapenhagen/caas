@@ -11,6 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,18 +33,24 @@ public class AuthFilter implements Filter {
         try {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             String reqURI = httpServletRequest.getRequestURI();
-            HttpServletResponse res = (HttpServletResponse) response;
+            HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+            
+            HttpSession session = ((HttpServletRequest) request).getSession(); 
+            
+           
+     
 
             //  allow user to proceed if url is index.xhtml or user logged in
-            if (sessionService.getSession() != null && sessionService.getUserName() != null) {
+            if (session != null || sessionService.getUserName() != null) {
                 //user is loged in 
-                res.sendRedirect(httpServletRequest.getContextPath() + "/pages/overview?faces-redirect=true");
+                httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + "/overview.xhtml?faces-redirect=true");
             } else {
                 // session expired
                 if (httpServletRequest.getRequestedSessionId() != null && !httpServletRequest.isRequestedSessionIdValid()) {
-                    res.sendRedirect(httpServletRequest.getContextPath() + "/index.xhtml?state=expired");
-                } else if (!reqURI.contains("javax.faces.resource")) {
-                    res.sendRedirect(httpServletRequest.getContextPath() + "/index.xhtml");
+                    httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + "/login.xhtml?state=expired");
+                } else if (!reqURI.contains("javax.faces.resource") || reqURI.contains("login.xhtml")) {
+                     //fast bypass for loging the Login Page. NO filter here needed
+                    httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + "/login.xhtml");
                 } else {
                     chain.doFilter(httpServletRequest, response);
                 }

@@ -25,7 +25,7 @@ public class Login implements Serializable {
 
     @Inject
     private SessionService sessionService;
-    
+
     @Inject
     private LoginAttempt loginAttempt;
 
@@ -35,27 +35,31 @@ public class Login implements Serializable {
 
     public String login() {
         String ipAddress = sessionService.getIp();
-        
+        String output = "";
+
         //create a UserAttempts to slowdown bruteforce
         UserAttempts ua = new UserAttempts(ipAddress, 3, LocalDateTime.now());
         loginAttempt.add(ipAddress, ua);
-        
-        //no more attempts for this ip
-        if(loginAttempt.getAttempts(ipAddress) <= 0){
-             //logout
-            return "login?faces-redirect=true";
-        }
-        
-        if (authService.authenticate(username, password)) {
-            //set Session for this username
-            HttpSession session = sessionService.getSession();
-            session.setAttribute("username", username);
 
-            return "overview?faces-redirect=true";
-        } else {
+        //no more attempts for this ip
+        if (loginAttempt.getAttempts(ipAddress) <= 0) {
             //logout
             return "login?faces-redirect=true";
         }
+
+        if (authService.authenticate(username, password)) {
+            //set Session for this username
+            HttpSession session = sessionService.getSession();
+            if (session != null) {
+                session.setAttribute("username", username);
+                output = "overview.xhtml?faces-redirect=true";
+            }
+        } else {
+            //logout
+            output = "login.xhtml?faces-redirect=true";
+        }
+
+        return output;
     }
 
     public String logout() {

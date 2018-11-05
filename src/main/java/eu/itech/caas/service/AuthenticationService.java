@@ -16,9 +16,12 @@
 package eu.itech.caas.service;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Base64;
 import java.util.StringTokenizer;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +30,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author jens.papenhagen
  */
-public class AuthenticationService {
+@Named
+@ApplicationScoped
+public class AuthenticationService implements Serializable{
 
     private static final Logger L = LoggerFactory.getLogger(AuthenticationService.class);
 
