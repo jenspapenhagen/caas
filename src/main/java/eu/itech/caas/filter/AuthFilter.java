@@ -36,8 +36,9 @@ public class AuthFilter implements Filter {
             HttpServletResponse httpServletResponse = (HttpServletResponse) response;
             
             HttpSession session = ((HttpServletRequest) request).getSession(); 
-            
-           
+            session.getId();
+
+
      
 
             //  allow user to proceed if url is index.xhtml or user logged in

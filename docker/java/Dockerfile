@@ -1,12 +1,43 @@
-FROM centos:7
-MAINTAINER Adam Bien, adam-bien.com
-RUN yum update -y \
-  && mkdir /usr/lib/jvm/ \    
-  && yum -y install unzip \    
-  && curl -O https://download.java.net/java/GA/jdk11/13/GPL/openjdk-11.0.1_linux-x64_bin.tar.gz \
-  && tar xvf openjdk-11.0.1_linux-x64_bin.tar.gz -C /usr/lib/jvm/ \
-  && yum clean all \
-  && rm openjdk-11.0.1_linux-x64_bin.tar.gz \  
-  && rm -rf /var/cache/yum
-ENV JAVA_HOME /usr/lib/jvm/jdk-10
-ENV PATH "$PATH":/${JAVA_HOME}/bin:.:
+FROM alpine:3.8
+
+MAINTAINER Andy Cobaugh, cobaugh
+
+# Default to UTF-8 file.encoding
+ENV LANG C.UTF-8
+
+# There might be newer builds, but not all are published (for apline) at: http://jdk.java.net/11/
+
+ENV JAVA_HOME="/jdk-11"
+ARG JDK_BUILD="28"
+ENV JDK_ARCHIVE="openjdk-11+${JDK_BUILD}_linux-x64-musl_bin.tar.gz"
+
+#RUN mkdir ${JAVA_HOME} && cd ${JAVA_HOME}
+
+RUN echo "Downloading ${JDK_ARCHIVE}"
+RUN wget https://download.java.net/java/early_access/alpine/${JDK_BUILD}/binaries/${JDK_ARCHIVE}
+
+RUN echo "Downloading sha256 checksum"
+RUN wget https://download.java.net/java/early_access/alpine/${JDK_BUILD}/binaries/${JDK_ARCHIVE}.sha256
+
+RUN echo "Verify checksum"
+# Two spaces bewteen hash & filename, as the output of 'sha256sum openjdk-11-...tar.gz'
+RUN echo "  ${JDK_ARCHIVE}" >> ${JDK_ARCHIVE}.sha256
+RUN sha256sum -c ${JDK_ARCHIVE}.sha256
+
+RUN echo "Checksum is correct"
+
+RUN echo "Extract JDK"
+RUN tar -xzf ${JDK_ARCHIVE}
+
+# Remove downlaoded files
+RUN rm ${JDK_ARCHIVE} ${JDK_ARCHIVE}.sha256 
+
+# Remove src.zip to reduce size
+RUN rm ${JAVA_HOME}/lib/src.zip
+
+#update the alpine linux and adding curl
+RUN apk update && apk add curl && rm -rf /var/cache/apk/*
+
+ENV PATH=$PATH:${JAVA_HOME}/bin
+ENV JAVA_VERSION 11-ea+${JDK_BUILD}
+ENV JAVA_ALPINE_VERSION 11~${JDK_BUILD}-1

@@ -1,6 +1,6 @@
 FROM base/java
 
-LABEL maintainer="Jens Papenhagen <jens.papenhagen@web.de>" description="Wildfly 14.0.1Final with datasource to an extern Mariadb/MySQL"
+LABEL maintainer="Jens Papenhagen <jens.papenhagen@web.de>" description="Wildfly 14.0.1 Final with datasource to an extern Mariadb/MySQL"
 
 # Wildfly Appserver
 ENV INSTALL_DIR /opt
@@ -14,10 +14,12 @@ ENV WILDFLY_CONFIGURATION_DIR ${WILDFLY_HOME}/standalone/configuration
 ENV JBOSS_CLI ${WILDFLY_HOME}/bin/jboss-cli.sh
 
 # Database
-ENV DB_NAME caas
+ENV DB_NAME db
+ENV DB_TABLENAME caas
 ENV DB_USER dbuser
 ENV DB_PASS dbuser
-ENV DB_URI db:3306
+ENV DB_PORT 3306
+
 
 # Datasource
 ENV DATASOURCE_NAME caas
@@ -25,7 +27,6 @@ ENV MYSQL_CONNECTOR 5.1.47
 
 # setting up the linux user
 RUN useradd -b /opt -m -s /bin/sh -d ${INSTALL_DIR} ${WILDFLY_USER} && echo ${WILDFLY_USER}:${WILDFLY_PASS} | chpasswd
-
 
 # download wildfly 
 RUN curl -O https://download.jboss.org/wildfly/${WILDFLY_VERSION}/wildfly-${WILDFLY_VERSION}.zip \
@@ -56,7 +57,7 @@ RUN echo "=> Starting WildFly server" && \
             --user-name=${DB_USER} \
             --password=${DB_PASS} \
             --driver-name=mysql \
-            --connection-url=jdbc:mysql://${DB_URI}/${DB_NAME} \
+            --connection-url=jdbc:mysql://${DB_NAME}:${DB_PORT}/${DB_TABLENAME} \
             --use-ccm=false \
             --max-pool-size=25 \
             --blocking-timeout-wait-millis=5000 \

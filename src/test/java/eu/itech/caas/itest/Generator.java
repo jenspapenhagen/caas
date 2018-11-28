@@ -20,6 +20,8 @@ import eu.itech.caas.entity.Catalog;
 import eu.itech.caas.entity.Product;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.NotSupportedException;
+import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 /**
@@ -43,14 +45,21 @@ public class Generator {
      * @throws Exception
      */
     public void generateProduct(int amount) throws Exception {
-        utx.begin();
-        em.joinTransaction();
-        for (int i = 0; i < amount; i++) {
-            Product p = new Product("testProduct " + amount, (3.50 * amount), 19);
-            em.persist(p);
+        try {
+            utx.begin();
+            em.joinTransaction();
+            for (int i = 0; i < amount; i++) {
+                Product p = new Product("testProduct " + amount, (3.50 * amount), 19);
+                em.persist(p);
+            }
+
+            utx.commit();
+        } catch (NotSupportedException e) {
+            //logger missing
+        } catch (SystemException e) {
+            //logger missing
         }
 
-        utx.commit();
     }
 
     /**
