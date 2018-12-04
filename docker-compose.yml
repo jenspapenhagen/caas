@@ -1,24 +1,40 @@
 version: '3.0'
 services:
   prometheus:
+    container_name: "prometheus"
     image: localhost:5000/base/prometheus
     ports:
     - "9090:9090"
     links:
     - app
   app:
+    container_name: "app"
     image: localhost:5000/base/app
-	volumes:
+    depends_on:
+    - db
+	  volumes:
 	  - /opt/wildfly/standalone/log:/opt/wildfly-14.0.1.Final/standalone/log
     - /opt/wildfly/standalone/deployments:/opt/wildfly-14.0.1.Final/standalone/deployments
     - /opt/wildfly/standalone/configuration:/opt/wildfly-14.0.1.Final/standalone/configuration
-  env_file: metrics.env
-  user: serveradmin:serveradmin
-  command: bash -c "/opt/jboss/wildfly/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0 -bmanagement 0.0.0.0"
-  ports: 
+    env_file: metrics.env
+    user: serveradmin:serveradmin
+    command: bash -c "/opt/jboss/wildfly/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0 -bmanagement 0.0.0.0"
+    ports: 
 	  - "8282:8080"
+  db:
+    container_name: "db"
+    image: "mysql:latest"
+    environment:
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=dbuser
+      - MYSQL_PASSWORD=dbuser
+      - MYSQL_ROOT_PASSWORD=dbuser
+    volumes:
+      - /opt/workdir/db/init/:/docker-entrypoint-initdb.d/ # init database
+      - /opt/workdir/db/data/:/var/lib/mysql/              # data storage
+    ports:
+      - "3306:3306"  
 networks:
   default:
-    external:
-      name: proxy_net
+    driver: bridge
 	
