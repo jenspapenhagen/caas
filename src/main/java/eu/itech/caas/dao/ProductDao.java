@@ -17,6 +17,7 @@ package eu.itech.caas.dao;
 
 import eu.itech.caas.assist.Caas;
 import eu.itech.caas.entity.Product;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;

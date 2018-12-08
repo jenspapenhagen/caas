@@ -70,7 +70,13 @@ public class Generator {
      * @throws Exception
      */
     public void generateCatalog(int amount) throws Exception {
-        utx.begin();
+        try {
+            utx.begin();
+        } catch (NotSupportedException e) {
+            e.printStackTrace();
+        } catch (SystemException e) {
+            e.printStackTrace();
+        }
         em.joinTransaction();
         for (int i = 0; i < amount; i++) {
             Catalog c = new Catalog("testProduct " + amount);
