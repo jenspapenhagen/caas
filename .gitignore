@@ -26,4 +26,4 @@ nbproject/*
 *.DS_Store
 *.lock
 /.idea/
-/caas.iml
+*.iml
