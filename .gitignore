@@ -25,3 +25,5 @@ nbproject/*
 *.swp
 *.DS_Store
 *.lock
+/.idea/
+/caas.iml
